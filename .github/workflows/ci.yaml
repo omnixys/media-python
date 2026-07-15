@@ -167,8 +167,8 @@ jobs:
       - name: Build package
         run: uv build
 
-      - name: Publish to PyPI
+      - name: Publish to GitHub Packages
         run: |
           uv publish dist/* \
-            --publish-url https://upload.pypi.org/legacy/ \
-            --token ${{ secrets.PYPI_TOKEN }}
+            --publish-url https://upload.pypi.pkg.github.com/${{ github.repository_owner }} \
+            --token ${{ secrets.OMNIXYS_TOKEN }}
