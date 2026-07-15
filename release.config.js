@@ -69,7 +69,6 @@ export default {
     ['@semantic-release/exec', {
       prepareCmd: (nextRelease) => `sed -i "s/__version__ = \\".*\\"/__version__ = \\"${nextRelease.version}\\"/" src/${package_name.replace(/-/g, '_')}/__init__.py`,
     }],
-    ['@semantic-release/npm', { npmPublish: false }],
     ['@semantic-release/git', {
       assets: ['pyproject.toml', `src/${package_name.replace(/-/g, '_')}/__init__.py`, 'CHANGELOG.md'],
       message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
