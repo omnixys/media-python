@@ -67,7 +67,7 @@ export default {
       changelogTitle: '# Changelog\n\nAll notable changes in this project will be documented in this file.\n',
     }],
     ['@semantic-release/exec', {
-      prepareCmd: 'sed -i "s/__version__ = \\".*\\"/__version__ = \\"${nextRelease.version}\\"/" src/' + package_name.replace(/-/g, '_') + '/__init__.py',
+      prepareCmd: 'sed -i "s/__version__ = \\".*\\"/__version__ = \\"${nextRelease.version}\\"/" src/omnixys_*/__init__.py',
     }],
     ['@semantic-release/git', {
       assets: ['pyproject.toml', `src/${package_name.replace(/-/g, '_')}/__init__.py`, 'CHANGELOG.md'],
