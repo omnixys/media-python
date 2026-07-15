@@ -164,8 +164,11 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Configure uv for GitHub Packages
+      - name: Build package
+        run: uv build
+
+      - name: Publish to GitHub Packages
         run: |
-          uv publish \
+          uv publish dist/* \
             --publish-url https://github.com/${{ github.repository_owner }}/${{ env.PACKAGE_NAME }}/packages/pypi \
             --token ${{ secrets.OMNIXYS_TOKEN }}
