@@ -34,6 +34,7 @@ select = ["ALL"]
 ]
 "src/**" = [
   "D", "ANN401", "ARG002", "S104", "S105",
+  "TC003",
 ]
 "src/omnixys_media/s3.py" = [
   "EM101", "EM102", "S107",
