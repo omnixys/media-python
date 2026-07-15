@@ -87,7 +87,7 @@ export default {
         '---\n\n' +
         '## Installation\n\n' +
         '```bash\n' +
-        'pip install ' + package_name + '==${nextRelease.version}\n' +
+        'pip install https://github.com/omnixys/' + package_name + '/releases/download/${nextRelease.tag}/' + package_name.replace(/-/g, '_') + '-${nextRelease.version}-py3-none-any.whl\n' +
         '```\n\n' +
         '## Links\n\n' +
         '- [GitHub Repository](https://github.com/omnixys/' + package_name + ')\n' +

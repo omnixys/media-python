@@ -153,7 +153,7 @@ jobs:
   publish:
     needs: release
     if: needs.release.outputs.released == 'true'
-    name: Publish to GitHub Packages
+    name: Upload to GitHub Release
     runs-on: ubuntu-latest
 
     steps:
@@ -167,8 +167,9 @@ jobs:
       - name: Build package
         run: uv build
 
-      - name: Publish to GitHub Packages
+      - name: Upload artifacts to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          uv publish dist/* \
-            --publish-url https://registry.github.com/${{ github.repository_owner }} \
-            --token ${{ secrets.OMNIXYS_TOKEN }}
+          gh release upload "v${{ needs.release.outputs.version }}" dist/* \
+            --repo ${{ github.repository }}
