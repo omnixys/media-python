@@ -67,7 +67,7 @@ export default {
       changelogTitle: '# Changelog\n\nAll notable changes in this project will be documented in this file.\n',
     }],
     ['@semantic-release/exec', {
-      prepareCmd: `sed -i "s/__version__ = \\".*\\"/__version__ = \\"${nextRelease.version}\\"/" src/${package_name.replace(/-/g, '_')}/__init__.py`,
+      prepareCmd: (nextRelease) => `sed -i "s/__version__ = \\".*\\"/__version__ = \\"${nextRelease.version}\\"/" src/${package_name.replace(/-/g, '_')}/__init__.py`,
     }],
     ['@semantic-release/npm', { npmPublish: false }],
     ['@semantic-release/git', {
@@ -78,30 +78,21 @@ export default {
       assets: [
         { path: 'CHANGELOG.md', label: 'Changelog' },
       ],
-      releaseBodyTemplate: `## ${nextRelease.version}
-
-📅 **Date:** ${new Date().toISOString().split('T')[0]}
-🌿 **Branch:** main
-🔖 **Tag:** \`${nextRelease.tag}\`
-📦 **Package:** ${package_name}
-
----
-
-${nextRelease.notes}
-
----
-
-## Installation
-
-\`\`\`bash
-pip install ${package_name}==${nextRelease.version}
-\`\`\`
-
-## Links
-
-- [GitHub Repository](https://github.com/omnixys/${package_name})
-- [Documentation](https://omnixys.github.io/omnixys)
-`,
+      releaseBodyTemplate: '## ${nextRelease.version}\n\n' +
+        '📅 **Date:** ' + new Date().toISOString().split('T')[0] + '\n' +
+        '🌿 **Branch:** main\n' +
+        '🔖 **Tag:** `${nextRelease.tag}`\n' +
+        '📦 **Package:** ' + package_name + '\n\n' +
+        '---\n\n' +
+        '${nextRelease.notes}\n\n' +
+        '---\n\n' +
+        '## Installation\n\n' +
+        '```bash\n' +
+        'pip install ' + package_name + '==${nextRelease.version}\n' +
+        '```\n\n' +
+        '## Links\n\n' +
+        '- [GitHub Repository](https://github.com/omnixys/' + package_name + ')\n' +
+        '- [Documentation](https://omnixys.github.io/omnixys)\n',
     }],
   ],
 };
