@@ -6,6 +6,7 @@ license = { text = "GPL-3.0-or-later" }
 requires-python = ">=3.14"
 dependencies = [
   "aiobotocore>=2.18.0",
+  "dishka>=1.10.0",
 ]
 
 authors = [

@@ -1,17 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections.abc import AsyncIterator
 
 from dishka import Provider, Scope, provide
-
-if TYPE_CHECKING:
-    from collections.abc import AsyncIterator
 
 from omnixys_media.s3 import S3StorageService
 
 
-class MediaProvider(Provider):  # type: ignore[misc]
-    @provide(scope=Scope.APP)  # type: ignore[untyped-decorator]
+class MediaProvider(Provider):
+    @provide(scope=Scope.APP)
     async def storage(  # noqa: PLR0913
         self,
         endpoint: str = "http://localhost:9000",
