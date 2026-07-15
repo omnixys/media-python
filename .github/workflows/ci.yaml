@@ -170,5 +170,5 @@ jobs:
       - name: Publish to GitHub Packages
         run: |
           uv publish dist/* \
-            --publish-url https://github.com/${{ github.repository_owner }}/${{ env.PACKAGE_NAME }}/packages/pypi \
+            --publish-url https://github.com/${{ github.repository }}/pypi \
             --token ${{ secrets.OMNIXYS_TOKEN }}
