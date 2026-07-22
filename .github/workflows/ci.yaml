@@ -3,7 +3,6 @@ name: CI
 on:
   push:
     branches: [main]
-    tags: ["v*"]
   pull_request:
     branches: [main]
 
@@ -35,31 +34,53 @@ jobs:
         run: uv run pytest
 
   release:
-    name: Create Release
     needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
+      pull-requests: write
     outputs:
-      released: ${{ steps.release.outputs.released }}
-      version: ${{ steps.version.outputs.version }}
+      released: ${{ steps.semantic.outputs.released }}
+      version: ${{ steps.semantic.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Extract version from tag
-        id: version
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
-
-      - name: Create GitHub Release
-        id: release
-        uses: softprops/action-gh-release@v2
+      - uses: actions/checkout@v6
         with:
-          generate_release_notes: true
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install semantic-release
+        run: |
+          npm install -g semantic-release
+          npm install -g @semantic-release/changelog
+          npm install -g @semantic-release/git
+          npm install -g @semantic-release/github
+          npm install -g conventional-changelog-conventionalcommits
+
+      - name: Semantic Release
+        id: semantic
+        run: |
+          OUTPUT=$(npx semantic-release --no-ci 2>&1 || true)
+          echo "$OUTPUT"
+
+          if echo "$OUTPUT" | grep -q "published"; then
+            echo "released=true" >> $GITHUB_OUTPUT
+          else
+            echo "released=false" >> $GITHUB_OUTPUT
+          fi
+
+          VERSION=$(grep -oP '__version__\s*=\s*"\K[^"]+' src/omnixys_media/__init__.py)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
     needs: release
     if: needs.release.outputs.released == 'true'
-    name: Upload to GitHub Release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

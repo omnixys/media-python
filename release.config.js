@@ -1,4 +1,20 @@
-const package_name = process.env.PACKAGE_NAME;
+/**
+ * @license GPL-3.0-or-later
+ * Copyright (C) 2025 Caleb Gyamfi
+ * Omnixys Technologies
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * For more information, visit <https://www.gnu.org/licenses/>.
+ */
 
 export default {
   branches: ['main'],
@@ -21,77 +37,17 @@ export default {
         { type: 'build', release: false },
       ],
     }],
-    ['@semantic-release/release-notes-generator', {
-      preset: 'conventionalcommits',
-      writerOpts: {
-        commitsSort: ['subject', 'scope'],
-        headerFormat: '## What\'s Changed\n\n',
-        transform: (commit, context) => {
-          const issues = [];
-          let subject = commit.subject || '';
-
-          subject = subject.replace(/@(\w+)/g, '**@$1**');
-
-          subject = subject.replace(/#(\d+)/g, (match, issue) => {
-            issues.push(issue);
-            return match;
-          });
-
-          const scope = commit.scope ? `**${commit.scope}:** ` : '';
-
-          return {
-            subject: `${scope}${subject}`,
-            type: commit.type,
-            scope: commit.scope,
-            hash: commit.hash ? commit.hash.substring(0, 7) : undefined,
-            references: issues.map(issue => ({
-              issue,
-              prefix: '#',
-              raw: `#${issue}`,
-            })),
-          };
-        },
-      },
-      presetConfig: {
-        types: [
-          { type: 'feat', section: '🚀 Features' },
-          { type: 'fix', section: '🐛 Bug Fixes' },
-          { type: 'perf', section: '⚡ Performance Improvements' },
-          { type: 'refactor', section: '♻️ Refactoring' },
-          { type: 'revert', section: '⏪ Reverts' },
-        ],
-      },
-    }],
-    ['@semantic-release/changelog', {
-      changelogFile: 'CHANGELOG.md',
-      changelogTitle: '# Changelog\n\nAll notable changes in this project will be documented in this file.\n',
-    }],
-    ['@semantic-release/exec', {
-      prepareCmd: 'sed -i "s/__version__ = \\".*\\"/__version__ = \\"${nextRelease.version}\\"/" src/omnixys_*/__init__.py',
-    }],
+    '@semantic-release/release-notes-generator',
+    ['@semantic-release/changelog', { changelogFile: 'CHANGELOG.md' }],
     ['@semantic-release/git', {
-      assets: ['pyproject.toml', `src/${package_name.replace(/-/g, '_')}/__init__.py`, 'CHANGELOG.md'],
+      assets: ['pyproject.toml', 'CHANGELOG.md', 'src/omnixys_media/__init__.py'],
       message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
     }],
     ['@semantic-release/github', {
       assets: [
         { path: 'CHANGELOG.md', label: 'Changelog' },
+        { path: 'dist/**', label: 'Build Artifacts' },
       ],
-      releaseBodyTemplate: '## ${nextRelease.version}\n\n' +
-        '📅 **Date:** ' + new Date().toISOString().split('T')[0] + '\n' +
-        '🌿 **Branch:** main\n' +
-        '🔖 **Tag:** `${nextRelease.tag}`\n' +
-        '📦 **Package:** ' + package_name + '\n\n' +
-        '---\n\n' +
-        '${nextRelease.notes}\n\n' +
-        '---\n\n' +
-        '## Installation\n\n' +
-        '```bash\n' +
-        'pip install https://github.com/omnixys/' + package_name + '/releases/download/${nextRelease.tag}/' + package_name.replace(/-/g, '_') + '-${nextRelease.version}-py3-none-any.whl\n' +
-        '```\n\n' +
-        '## Links\n\n' +
-        '- [GitHub Repository](https://github.com/omnixys/' + package_name + ')\n' +
-        '- [Documentation](https://omnixys.github.io/omnixys)\n',
     }],
   ],
 };
