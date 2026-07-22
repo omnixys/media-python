@@ -39,6 +39,9 @@ export default {
     }],
     '@semantic-release/release-notes-generator',
     ['@semantic-release/changelog', { changelogFile: 'CHANGELOG.md' }],
+    ['@semantic-release/exec', {
+      prepareCmd: 'sed -i "s/__version__ = \\".*\\"/__version__ = \\"${nextRelease.version}\\"/" src/omnixys_media/__init__.py',
+    }],
     ['@semantic-release/git', {
       assets: ['pyproject.toml', 'CHANGELOG.md', 'src/omnixys_media/__init__.py'],
       message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
