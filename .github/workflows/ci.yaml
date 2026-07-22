@@ -41,12 +41,16 @@ jobs:
       issues: write
       pull-requests: write
     outputs:
-      released: ${{ steps.semantic.outputs.released }}
-      version: ${{ steps.semantic.outputs.version }}
+      released: ${{ steps.set_outputs.outputs.released }}
+      version: ${{ steps.set_outputs.outputs.version }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Get version before
+        id: version_before
+        run: echo "version=$(grep -oE '__version__ = "[^"]+"' src/omnixys_cache/__init__.py)" >> $GITHUB_OUTPUT
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -62,21 +66,28 @@ jobs:
           npm install -g conventional-changelog-conventionalcommits
 
       - name: Semantic Release
-        id: semantic
-        run: |
-          OUTPUT=$(npx semantic-release --no-ci 2>&1 || true)
-          echo "$OUTPUT"
+        run: npx semantic-release --no-ci || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          if echo "$OUTPUT" | grep -q "published"; then
+      - name: Get version after
+        id: version_after
+        run: echo "version=$(grep -oE '__version__ = "[^"]+"' src/omnixys_cache/__init__.py)" >> $GITHUB_OUTPUT
+
+      - name: Set outputs
+        id: set_outputs
+        run: |
+          BEFORE="${{ steps.version_before.outputs.version }}"
+          AFTER="${{ steps.version_after.outputs.version }}"
+          echo "version_before: $BEFORE"
+          echo "version_after: $AFTER"
+          if [ "$BEFORE" != "$AFTER" ]; then
             echo "released=true" >> $GITHUB_OUTPUT
+            VERSION=$(echo "$AFTER" | grep -oE '"[^"]+"' | tr -d '"')
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
           else
             echo "released=false" >> $GITHUB_OUTPUT
           fi
-
-          VERSION=$(grep -oP '__version__\s*=\s*"\K[^"]+' src/omnixys_media/__init__.py)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
     needs: release
