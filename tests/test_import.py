@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import importlib
-
+from importlib.metadata import version as pkg_version
 
 
 def test_package_importable() -> None:
     mod = importlib.import_module("omnixys_media")
     assert hasattr(mod, "__version__")
-    assert mod.__version__ == "1.0.0"
+    assert mod.__version__ == pkg_version("omnixys-media")
 
 
 def test_public_api() -> None:
