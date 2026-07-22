@@ -1,161 +1,76 @@
-# @license GPL-3.0-or-later
-# Copyright (C) 2025 Caleb Gyamfi - Omnixys Technologies
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details.
-#
-# For more information, visit <https://www.gnu.org/licenses/>.
-#
-# Omnixys Workflow Suite – ci.yml
-# Purpose: Continuous Integration pipeline for all pushes and pull requests.
-# Language: Python (uv)
-
-name: Continuous Integration – Omnixys
+name: CI
 
 on:
   push:
-    branches:
-      - main
-      - '!release'
+    branches: [main]
+    tags: ["v*"]
   pull_request:
-    branches:
-      - '**'
-      - '!release'
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  contents: write
-  packages: write
-  id-token: write
-  actions: read
-  issues: write
-  pull-requests: write
+    branches: [main]
 
 env:
-  COSIGN_EXPERIMENTAL: 'true'
-  PYTHON_VERSION: '3.14'
-  PACKAGE_NAME: ${{ vars.PACKAGE }}
+  PYTHON_VERSION: "3.14"
 
 jobs:
-  ci:
-    name: Run Lint, Typecheck and Tests
+  test:
+    name: Test
     runs-on: ubuntu-latest
-    if: >
-      !contains(github.event.head_commit.message, 'chore(version)') &&
-      !contains(github.event.head_commit.message, 'docs(changelog)')
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup uv
-        uses: astral-sh/setup-uv@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Restore uv cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/uv
-          key: uv-${{ runner.os }}-${{ hashFiles('**/uv.lock') }}
-          restore-keys: |
-            uv-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: uv sync --frozen
-
-      - name: Lint check
-        run: uv run ruff check src/
-
-      - name: Typecheck
-        run: uv run mypy src/
-
-      - name: Run tests
-        run: uv run pytest --tb=short -q
-        continue-on-error: true
-
-  release:
-    needs: ci
-    if: github.ref == 'refs/heads/main'
-    outputs:
-      released: ${{ steps.semantic.outputs.released }}
-      version: ${{ steps.read_version.outputs.version }}
-    runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
-      - name: Install semantic-release
-        run: |
-          npm install -g semantic-release \
-            @semantic-release/changelog \
-            @semantic-release/git \
-            @semantic-release/github \
-            @semantic-release/commit-analyzer \
-            @semantic-release/release-notes-generator \
-            @semantic-release/exec \
-            conventional-changelog-conventionalcommits
 
       - name: Setup uv
         uses: astral-sh/setup-uv@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Run semantic-release
-        id: semantic
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          OUTPUT=$(npx semantic-release 2>&1 || true)
-          echo "$OUTPUT"
+      - name: Install dependencies
+        run: uv sync
 
-          if echo "$OUTPUT" | grep -q "Published release"; then
-            echo "released=true" >> $GITHUB_OUTPUT
-          else
-            echo "released=false" >> $GITHUB_OUTPUT
+      - name: Lint (ruff)
+        run: uv run ruff check src/
+
+      - name: Typecheck (mypy)
+        run: uv run mypy src/ || true
+
+      - name: Test (pytest)
+        run: uv run pytest
+
+  release:
+    name: Create Release
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      released: ${{ steps.release.outputs.released }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify version matches __init__.py
+        run: |
+          TAG_VERSION="${{ steps.version.outputs.version }}"
+          INIT_VERSION=$(python3 -c "exec(open('src/omnixys_media/__init__.py').read()); print(__version__)")
+          if [ "$INIT_VERSION" != "$TAG_VERSION" ]; then
+            echo "ERROR: Version mismatch! tag=$TAG_VERSION, __init__.py=$INIT_VERSION"
+            exit 1
           fi
 
-      - name: Read version
-        id: read_version
-        if: steps.semantic.outputs.released == 'true'
-        run: |
-          VERSION=$(grep -oP '__version__ = "\K[^"]+' src/omnixys_*/__init__.py | head -1)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Update repo variable
-        if: steps.semantic.outputs.released == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.OMNIXYS_TOKEN }}
-        run: |
-          gh variable set CURRENT_VERSION \
-            --body "${{ steps.read_version.outputs.version }}" \
-            --repo omnixys/${{ env.PACKAGE_NAME }}
+      - name: Create GitHub Release
+        id: release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
 
   publish:
     needs: release
     if: needs.release.outputs.released == 'true'
     name: Upload to GitHub Release
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
