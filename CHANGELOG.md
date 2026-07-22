@@ -1,3 +1,10 @@
+## [2.0.4](https://github.com/omnixys/media-python/compare/v2.0.3...v2.0.4) (2026-07-22)
+
+
+### Bug Fixes
+
+* **publish:** add uv build before uv publish ([933b4c2](https://github.com/omnixys/media-python/commit/933b4c22e1a355c6d47913e8bd77e5e228d319c0))
+
 ## [2.0.3](https://github.com/omnixys/media-python/compare/v2.0.2...v2.0.3) (2026-07-22)
 
 
