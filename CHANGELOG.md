@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/omnixys/media-python/compare/v2.0.0...v2.0.1) (2026-07-22)
+
+
+### Bug Fixes
+
+* **cicd:** use version comparison for release detection ([d5bdd63](https://github.com/omnixys/media-python/commit/d5bdd63a870841135ec1b8ee0d9813bd66b24df8))
+
 # [2.0.0](https://github.com/omnixys/media-python/compare/v1.1.1...v2.0.0) (2026-07-22)
 
 # Changelog
