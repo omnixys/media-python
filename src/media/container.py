@@ -4,7 +4,7 @@ from collections.abc import AsyncIterator
 
 from dishka import Provider, Scope, provide
 
-from omnixys_media.s3 import S3StorageService
+from media.s3 import S3StorageService
 
 
 class MediaProvider(Provider):

@@ -28,10 +28,10 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
-path = "src/omnixys_media/__init__.py"
+path = "src/media/__init__.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/omnixys_media"]
+packages = ["src/media"]
 
 [dependency-groups]
 dev = [
@@ -59,13 +59,13 @@ select = ["ALL"]
     "D", "ANN401", "ARG002", "S104", "S105",
     "TC003",
 ]
-"src/omnixys_media/s3.py" = [
+"src/media/s3.py" = [
     "EM101", "EM102", "S107",
 ]
-"src/omnixys_media/container.py" = [
+"src/media/container.py" = [
     "S107",
 ]
-"src/omnixys_media/errors.py" = [
+"src/media/errors.py" = [
     "EM101", "EM102",
 ]
 

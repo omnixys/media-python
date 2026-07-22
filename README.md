@@ -18,7 +18,7 @@ pip install omnixys-media
 ## Usage
 
 ```python
-from omnixys_media import S3StorageService, MediaProvider, StorageResult
+from media import S3StorageService, MediaProvider, StorageResult
 ```
 
 ## License

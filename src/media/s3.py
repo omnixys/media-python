@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING, Any
 
 from aiobotocore.session import get_session
 
-from omnixys_media.errors import StorageError
-from omnixys_media.model import StorageResult
+from media.errors import StorageError
+from media.model import StorageResult
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
