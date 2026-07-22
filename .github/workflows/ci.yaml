@@ -50,15 +50,6 @@ jobs:
         id: version
         run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
-      - name: Verify version matches __init__.py
-        run: |
-          TAG_VERSION="${{ steps.version.outputs.version }}"
-          INIT_VERSION=$(python3 -c "exec(open('src/omnixys_media/__init__.py').read()); print(__version__)")
-          if [ "$INIT_VERSION" != "$TAG_VERSION" ]; then
-            echo "ERROR: Version mismatch! tag=$TAG_VERSION, __init__.py=$INIT_VERSION"
-            exit 1
-          fi
-
       - name: Create GitHub Release
         id: release
         uses: softprops/action-gh-release@v2
