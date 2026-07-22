@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/omnixys/media-python/compare/v2.0.1...v2.0.2) (2026-07-22)
+
+
+### Bug Fixes
+
+* **release:** add @semantic-release/exec to update __version__ in __init__.py ([5d2ed9b](https://github.com/omnixys/media-python/commit/5d2ed9b2ea4b18fec74e5e7f4710c87cda184c39))
+
 ## [2.0.1](https://github.com/omnixys/media-python/compare/v2.0.0...v2.0.1) (2026-07-22)
 
 
