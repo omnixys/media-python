@@ -2,16 +2,26 @@
 name = "omnixys-media"
 dynamic = ["version"]
 description = "Omnixys shared media/storage package (S3/MinIO with aiobotocore)"
+readme = "README.md"
 license = { text = "GPL-3.0-or-later" }
 requires-python = ">=3.14"
+authors = [{ name = "Omnixys Team", email = "team@omnixys.com" }]
+keywords = ["omnixys", "media", "storage", "s3", "minio", "file-upload"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3.14",
+    "Typing :: Typed",
+]
 dependencies = [
-  "aiobotocore>=2.18.0",
-  "dishka>=1.10.0",
+    "aiobotocore>=2.18.0",
+    "dishka>=1.10.0",
 ]
 
-authors = [
-  {name = "Omnixys Team", email = "team@omnixys.com"},
-]
+[project.urls]
+Homepage = "https://github.com/omnixys/omnixys"
+Repository = "https://github.com/omnixys/omnixys"
 
 [build-system]
 requires = ["hatchling"]
@@ -20,39 +30,8 @@ build-backend = "hatchling.build"
 [tool.hatch.version]
 path = "src/omnixys_media/__init__.py"
 
-[tool.ruff]
-line-length = 120
-target-version = "py314"
-
-[tool.ruff.lint]
-select = ["ALL"]
-
-[tool.ruff.lint.per-file-ignores]
-"tests/**" = [
-  "ANN101", "ANN401", "S101",
-  "T20", "FBT", "D", "INP001",
-]
-"src/**" = [
-  "D", "ANN401", "ARG002", "S104", "S105",
-  "TC003",
-]
-"src/omnixys_media/s3.py" = [
-  "EM101", "EM102", "S107",
-]
-"src/omnixys_media/container.py" = [
-  "S107",
-]
-"src/omnixys_media/errors.py" = [
-  "EM101", "EM102",
-]
-
-[tool.mypy]
-strict = true
-ignore_missing_imports = true
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["src"]
+[tool.hatch.build.targets.wheel]
+packages = ["src/omnixys_media"]
 
 [dependency-groups]
 dev = [
@@ -63,3 +42,37 @@ dev = [
     "pydantic>=2.0.0",
     "pydantic-settings>=2.14.1",
 ]
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["ALL"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "ANN101", "ANN401", "S101",
+    "T20", "FBT", "D", "INP001",
+]
+"src/**" = [
+    "D", "ANN401", "ARG002", "S104", "S105",
+    "TC003",
+]
+"src/omnixys_media/s3.py" = [
+    "EM101", "EM102", "S107",
+]
+"src/omnixys_media/container.py" = [
+    "S107",
+]
+"src/omnixys_media/errors.py" = [
+    "EM101", "EM102",
+]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
