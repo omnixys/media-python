@@ -1,3 +1,10 @@
+## [2.0.3](https://github.com/omnixys/media-python/compare/v2.0.2...v2.0.3) (2026-07-22)
+
+
+### Bug Fixes
+
+* **publish:** replace gh release upload with uv publish to PyPI ([db7ef39](https://github.com/omnixys/media-python/commit/db7ef39834dabcf0ad2ad4385b55d0569c96b88d))
+
 ## [2.0.2](https://github.com/omnixys/media-python/compare/v2.0.1...v2.0.2) (2026-07-22)
 
 
