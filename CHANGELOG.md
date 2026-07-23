@@ -1,3 +1,5 @@
+# [3.0.0](https://github.com/omnixys/media-python/compare/v2.0.4...v3.0.0) (2026-07-23)
+
 ## [2.0.4](https://github.com/omnixys/media-python/compare/v2.0.3...v2.0.4) (2026-07-22)
 
 
