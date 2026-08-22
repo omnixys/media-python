@@ -52,15 +52,17 @@ select = ["ALL"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = [
+    "ANN001", "ARG001", "ARG002", "PLR2004", "PLC0415", "PT011", "SLF001",
+    "PT017", "RSE102", "RUF059", "TRY003", "EM101", "SIM105", "TC003",
     "ANN101", "ANN401", "S101",
-    "T20", "FBT", "D", "INP001",
+    "T20", "FBT", "D", "INP001", "N803", "PYI034",
 ]
 "src/**" = [
     "D", "ANN401", "ARG002", "S104", "S105",
     "TC003",
 ]
 "src/media/s3.py" = [
-    "EM101", "EM102", "S107",
+    "EM101", "EM102", "S107", "TRY003", "BLE001",
 ]
 "src/media/container.py" = [
     "S107",
@@ -76,3 +78,4 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+asyncio_mode = "auto"

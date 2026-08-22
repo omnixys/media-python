@@ -1,7 +1,42 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
+from typing import Any
+
+STORAGE_ERROR = "STORAGE_ERROR"
+MEDIA_STORAGE_CLOSED = "MEDIA_STORAGE_CLOSED"
+MEDIA_DRAIN_TIMEOUT = "MEDIA_DRAIN_TIMEOUT"
+MEDIA_UPLOAD_FAILED = "MEDIA_UPLOAD_FAILED"
+MEDIA_UPLOAD_STREAM_FAILED = "MEDIA_UPLOAD_STREAM_FAILED"
+MEDIA_UPLOAD_MULTIPART_FAILED = "MEDIA_UPLOAD_MULTIPART_FAILED"
+MEDIA_MULTIPART_ID_MISSING = "MEDIA_MULTIPART_ID_MISSING"
+MEDIA_MULTIPART_ETAG_MISSING = "MEDIA_MULTIPART_ETAG_MISSING"
+MEDIA_MULTIPART_CREATE_FAILED = "MEDIA_MULTIPART_CREATE_FAILED"
+MEDIA_MULTIPART_PART_FAILED = "MEDIA_MULTIPART_PART_FAILED"
+MEDIA_MULTIPART_COMPLETE_FAILED = "MEDIA_MULTIPART_COMPLETE_FAILED"
+MEDIA_MULTIPART_ABORT_FAILED = "MEDIA_MULTIPART_ABORT_FAILED"
+MEDIA_DELETE_FAILED = "MEDIA_DELETE_FAILED"
+MEDIA_GET_FAILED = "MEDIA_GET_FAILED"
+MEDIA_GET_STREAM_FAILED = "MEDIA_GET_STREAM_FAILED"
+MEDIA_SIGN_UPLOAD_FAILED = "MEDIA_SIGN_UPLOAD_FAILED"
+MEDIA_SIGN_DOWNLOAD_FAILED = "MEDIA_SIGN_DOWNLOAD_FAILED"
+MEDIA_HEALTH_FAILED = "MEDIA_HEALTH_FAILED"
+MEDIA_BODY_UNSUPPORTED = "MEDIA_BODY_UNSUPPORTED"
+
 
 class StorageError(Exception):
-    def __init__(self, message: str, code: str = "STORAGE_ERROR") -> None:
+    """Raised when a storage operation fails.
+
+    Carries a machine-readable ``code`` (mirroring the TS ``MediaStorageException``
+    codes) and structured ``metadata`` describing the failed operation.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        code: str = STORAGE_ERROR,
+        metadata: Mapping[str, Any] | None = None,
+    ) -> None:
         self.code = code
+        self.metadata = dict(metadata) if metadata else {}
         super().__init__(message)
