@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/omnixys/media-python/compare/v3.0.0...v3.0.1) (2026-08-22)
+
+
+### Bug Fixes
+
+* **dir:** remove target dir ([41e77bc](https://github.com/omnixys/media-python/commit/41e77bcc0ed9bc6e51c3764633677db198a3055f))
+
 # [3.0.0](https://github.com/omnixys/media-python/compare/v2.0.4...v3.0.0) (2026-07-23)
 
 ## [2.0.4](https://github.com/omnixys/media-python/compare/v2.0.3...v2.0.4) (2026-07-22)
