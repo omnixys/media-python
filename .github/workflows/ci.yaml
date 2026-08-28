@@ -66,8 +66,15 @@ jobs:
       - name: Semantic Release
         id: semantic
         run: |
-          OUTPUT=$(npx semantic-release --no-ci 2>&1 || true)
+          set +e
+          OUTPUT=$(npx semantic-release --no-ci 2>&1)
+          RELEASE_EXIT_CODE=$?
+          set -e
           echo "$OUTPUT"
+
+          if [ "$RELEASE_EXIT_CODE" -ne 0 ]; then
+            exit "$RELEASE_EXIT_CODE"
+          fi
 
           if echo "$OUTPUT" | grep -q "Published"; then
             echo "released=true" >> $GITHUB_OUTPUT
@@ -80,22 +87,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-#   publish:
-#     needs: release
-#     if: needs.release.outputs.released == 'true'
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
-# 
-#       - name: Setup uv
-#         uses: astral-sh/setup-uv@v4
-#         with:
-#           python-version: ${{ env.PYTHON_VERSION }}
-# 
-#       - name: Build package
-#         run: uv build
-# 
-#       - name: Publish to PyPI
-#         run: uv publish dist/*
-#         env:
-#           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+  publish:
+    needs: release
+    if: needs.release.outputs.released == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/v${{ needs.release.outputs.version }}
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Build package
+        run: uv build
+
+      - name: Publish to PyPI
+        run: uv publish dist/*
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}

@@ -51,6 +51,13 @@ FAILURE`, or `NOT RUN` (with a reason). Never convert `NOT RUN` into `PASS`.
   - `uv run pytest`
   - `uv build (hatchling)`
 
+## Release
+
+- Pushes to `main` run Semantic Release after validation.
+- Semantic Release updates the package version, creates the release commit, and tags it as `v<version>`.
+- PyPI publishing must build exclusively from that generated release tag so package metadata matches the GitHub release.
+- Release and publish failures must fail the workflow; they must not be silently ignored.
+
 ## Commit
 
 - Use Conventional Commits (`<type>(<scope>): <summary>`), e.g. `feat`, `fix`, `refactor`, `test`, `docs`, `build`, `ci`, `perf`.
