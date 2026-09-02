@@ -30,7 +30,6 @@ from media.model import (
 )
 from media.s3 import S3StorageService
 
-
 __all__ = [
     "MEDIA_DELETE_FAILED",
     "MEDIA_DRAIN_TIMEOUT",
