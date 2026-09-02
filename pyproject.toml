@@ -1,6 +1,6 @@
 [project]
 name = "omnixys-media"
-version = "3.0.1"
+version = "3.0.2"
 description = "Omnixys shared media/storage package (S3/MinIO with aiobotocore)"
 readme = "README.md"
 license = { text = "GPL-3.0-or-later" }
