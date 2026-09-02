@@ -62,7 +62,7 @@ jobs:
             @semantic-release/exec \
             @semantic-release/git \
             @semantic-release/github \
-            conventional-changelog-conventionalcommits \
+            conventional-changelog-conventionalcommits@^9 \
             @commitlint/cli \
             @commitlint/config-conventional \
             @semantic-release/commit-analyzer \
