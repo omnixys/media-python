@@ -393,6 +393,7 @@ wheels = [
 
 [[package]]
 name = "omnixys-media"
+version = "3.0.1"
 source = { editable = "." }
 dependencies = [
     { name = "aiobotocore" },

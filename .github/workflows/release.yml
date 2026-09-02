@@ -49,6 +49,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -56,18 +59,31 @@ jobs:
 
       - name: Install semantic-release
         run: |
-          npm install -g semantic-release
-          npm install -g @semantic-release/changelog
-          npm install -g @semantic-release/exec
-          npm install -g @semantic-release/git
-          npm install -g @semantic-release/github
-          npm install -g conventional-changelog-conventionalcommits
+          npm install -g \
+            semantic-release \
+            @semantic-release/changelog \
+            @semantic-release/exec \
+            @semantic-release/git \
+            @semantic-release/github \
+            conventional-changelog-conventionalcommits@^9 \
+            @commitlint/cli \
+            @commitlint/config-conventional \
+            @semantic-release/commit-analyzer \
+            @semantic-release/npm \
+            @semantic-release/release-notes-generator
 
       - name: Semantic Release
         id: semantic
         run: |
-          OUTPUT=$(npx semantic-release --no-ci 2>&1 || true)
+          set +e
+          OUTPUT=$(npx semantic-release --no-ci 2>&1)
+          RELEASE_EXIT_CODE=$?
+          set -e
           echo "$OUTPUT"
+
+          if [ "$RELEASE_EXIT_CODE" -ne 0 ]; then
+            exit "$RELEASE_EXIT_CODE"
+          fi
 
           if echo "$OUTPUT" | grep -q "Published"; then
             echo "released=true" >> $GITHUB_OUTPUT
@@ -75,27 +91,29 @@ jobs:
             echo "released=false" >> $GITHUB_OUTPUT
           fi
 
-          VERSION=$(grep -oP '__version__\s*=\s*"\K[^"]+' src/${PACKAGE}/__init__.py)
+          VERSION=$(python3 -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-#   publish:
-#     needs: release
-#     if: needs.release.outputs.released == 'true'
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
-# 
-#       - name: Setup uv
-#         uses: astral-sh/setup-uv@v4
-#         with:
-#           python-version: ${{ env.PYTHON_VERSION }}
-# 
-#       - name: Build package
-#         run: uv build
-# 
-#       - name: Publish to PyPI
-#         run: uv publish dist/*
-#         env:
-#           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+  publish:
+    needs: release
+    if: needs.release.outputs.released == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/v${{ needs.release.outputs.version }}
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Build package
+        run: uv build
+
+      - name: Publish to PyPI
+        run: uv publish dist/*
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
