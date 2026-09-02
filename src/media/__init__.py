@@ -30,7 +30,6 @@ from media.model import (
 )
 from media.s3 import S3StorageService
 
-__version__ = "3.0.1"
 
 __all__ = [
     "MEDIA_DELETE_FAILED",
