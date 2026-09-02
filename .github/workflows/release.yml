@@ -56,17 +56,18 @@ jobs:
 
       - name: Install semantic-release
         run: |
-          npm install -g semantic-release
-          npm install -g @semantic-release/changelog
-          npm install -g @semantic-release/exec
-          npm install -g @semantic-release/git
-          npm install -g @semantic-release/github
-          npm install -g conventional-changelog-conventionalcommits
-          npm install -g @commitlint/cli
-          npm install -g @commitlint/config-conventional
-          npm install -g @semantic-release/commit-analyzer
-          npm install -g @semantic-release/npm
-          npm install -g @semantic-release/release-notes-generator
+          npm install -g \
+            semantic-release \
+            @semantic-release/changelog \
+            @semantic-release/exec \
+            @semantic-release/git \
+            @semantic-release/github \
+            conventional-changelog-conventionalcommits \
+            @commitlint/cli \
+            @commitlint/config-conventional \
+            @semantic-release/commit-analyzer \
+            @semantic-release/npm \
+            @semantic-release/release-notes-generator
 
       - name: Semantic Release
         id: semantic
